@@ -29,7 +29,7 @@ def evaluate_policy(env, policy, render=False, runs=100):
     losses
         Number of unsuccessful environment completions
     scores
-        Total reward of each run 
+        Total reward of each run
     """
     wins = 0
     losses = 0
@@ -73,7 +73,7 @@ if __name__ == "__main__":
                               gamma=GAMMA)
     print("Optimal policy: " + str(policy))
 
-    wins, losses, scores = evaluate_policy(env, policy, runs=RUNS)
+    wins, losses, scores = evaluate_policy(env, policy, render=True, runs=RUNS)
 
     # display results
     print("-------------------------------------------------------------------")
@@ -94,7 +94,7 @@ if __name__ == "__main__":
                            gamma=GAMMA)
     print("Optimal policy: " + str(policy))
 
-    wins, losses, scores = evaluate_policy(env, policy, runs=RUNS)
+    wins, losses, scores = evaluate_policy(env, policy, render=False, runs=RUNS)
 
     # display results
     print("-------------------------------------------------------------------")
