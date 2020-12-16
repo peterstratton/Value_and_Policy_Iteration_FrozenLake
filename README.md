@@ -25,8 +25,8 @@ This will run both policy iteration and value iteration and display their result
 
 ## Output 
 The output of the program displays the percentage of successful and unsuccesful completions of the environment and the mean total reward accumulated over a single run for the policies obtained through value and policy iteration. Before running the program, the user has the option to render the environment, which will print the environment to the console window each time an action is taken.
-![](https://github.com/ExistentialRobotics/erl_python_simulation/blob/devel/src/algorithms/SLAM/Peter_PF_SLAM/results/console_win_map.png)
-![](https://github.com/ExistentialRobotics/erl_python_simulation/blob/devel/src/algorithms/SLAM/Peter_PF_SLAM/results/console_win_map.png)  
+![](https://github.com/peterstratton/Value_and_Policy_Iteration_FrozenLake/blob/main/results_pictures/rendered_env_frozenlake.png)
+![](https://github.com/peterstratton/Value_and_Policy_Iteration_FrozenLake/blob/main/results_pictures/vp_run_stats.png)  
 
 
 
