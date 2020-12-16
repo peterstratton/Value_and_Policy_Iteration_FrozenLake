@@ -1,9 +1,8 @@
 import gym
 import numpy as np
 
-RUNS = 1000
 
-def policy_iteration(env):
+def policy_iteration(state_transition, num_states, num_actions, gamma=0.9):
     """
     Function that implements the policy iteration algorithm. It initializes an
     arbitrary policy, updates the values of the environment states using the
@@ -11,17 +10,22 @@ def policy_iteration(env):
 
     Parameters
     ----------
-    arg1 : Open AI gym environment (<class 'gym.wrappers.time_limit.TimeLimit'>)
-        Gym environment that allows for deterministic policy
+    arg1 : dict
+        Dictionary of lists, where
+        state_transition[state][action] == [(probability, nextstate, reward,
+                                             done), ...]
+    arg2 : int
+        Number of states in the environment
+    arg3 : int
+        Number of actions in the environment
+    arg4 : float
+        Discount variable
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         The optimal policy for the environment
     """
-    num_states = env.nS
-    num_actions = env.nA
-    state_transition = env.P
 
     # init state values and policy
     values = np.zeros(num_states)
@@ -29,26 +33,26 @@ def policy_iteration(env):
 
     # loop until policy converges
     stable = False
-    gamma = 0.9
     while not stable:
         values = policy_evaluation(policy, values, state_transition, \
-                                   num_states, num_actions, gamma)
+                                   num_states, num_actions, gamma=gamma)
         policy, stable = policy_improvement(policy, values, state_transition, \
-                                            num_states, num_actions, gamma)
+                                           num_states, num_actions, gamma=gamma)
 
     return policy
 
 
-def policy_evaluation(policy, values, state_transition, num_states, num_actions, gamma):
+def policy_evaluation(policy, values, state_transition, num_states, \
+                      num_actions, gamma=0.9):
     """
     Function that evaluates a policy by determining the values of the
     environment states using the policy.
 
     Parameters
     ----------
-    arg1 : numpy.array
+    arg1 : numpy.ndarray
         Policy that dictates the action to be made from a given state
-    arg2 : numpy.array
+    arg2 : numpy.ndarray
         Values of the states under the given policy
     arg3 : dict
         Dictionary of lists, where
@@ -56,12 +60,14 @@ def policy_evaluation(policy, values, state_transition, num_states, num_actions,
                                              done), ...]
     arg4 : int
         Number of states in the environment
-    arg5 : float
+    arg5 : int
+        Number of actions in the environment
+    arg6 : float
         Discount variable
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         New values of each state
     """
     # threshold that defines when values have converged
@@ -88,16 +94,17 @@ def policy_evaluation(policy, values, state_transition, num_states, num_actions,
     return values
 
 
-def policy_improvement(policy, values, state_transition, num_states, num_actions, gamma):
+def policy_improvement(policy, values, state_transition, num_states, \
+                       num_actions, gamma=0.9):
     """
     Function that improves the given policy by altering its action from a state
     to go to the next state with the largest value.
 
     Parameters
     ----------
-    arg1 : numpy.array
+    arg1 : numpy.ndarray
         Policy that dictates the action to be made from a given state
-    arg2 : numpy.array
+    arg2 : numpy.ndarray
         Values of the states under the given policy
     arg3 : dict
         Dictionary of lists, where
@@ -105,12 +112,14 @@ def policy_improvement(policy, values, state_transition, num_states, num_actions
                                              done), ...]
     arg4 : int
         Number of states in the environment
-    arg5 : float
+    arg5 : int
+        Number of actions in the environment
+    arg6 : float
         Discount variable
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         New policy that now gives actions that maximize the expected reward,
         given the current values
     boolean
@@ -123,7 +132,6 @@ def policy_improvement(policy, values, state_transition, num_states, num_actions
         prev_a = policy[state]
 
         # determine actions that give the highest value
-        actions = []
         max = 0
         for action in range(num_actions):
             value = 0
@@ -139,43 +147,3 @@ def policy_improvement(policy, values, state_transition, num_states, num_actions
             stable = False
 
     return policy, stable
-
-
-if __name__ == "__main__":
-    env = gym.make('FrozenLake8x8-v0')
-    observation = env.reset()
-
-    # obtain optimal policy
-    policy = policy_iteration(env)
-    print("Optimal policy: " + str(policy))
-
-    # test policy
-    win = 0
-    lose = 0
-    scores = []
-    for i in range(RUNS):
-        observation = env.reset()
-        done = False
-        t = 0
-        reward_total = 0
-        while not done:
-            # make actions in the environment
-            action = policy[observation]
-            observation, reward, done, info = env.step(action)
-            reward_total += reward
-
-        # sum wins and losses
-        scores.append(reward_total)
-        if reward == 1:
-            win += 1
-        else:
-            lose += 1
-
-    # display results
-    print("-------------------------------------------------------------------")
-    print("Policy resulted in winning: " + str((win / float(RUNS)) * 100) + " percent of the time")
-    print("Policy resulted in losing: " + str((lose / float(RUNS)) * 100) + " percent of the time")
-    print("-------------------------------------------------------------------")
-    print("Mean score = %0.2f" %(np.mean(np.array(scores))))
-    print("-------------------------------------------------------------------")
-    env.close()
